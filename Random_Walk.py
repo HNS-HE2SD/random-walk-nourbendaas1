@@ -30,11 +30,27 @@ class Point:
         self.y = y
 
     # This method changes the Point's coordinates (its position).
-    def move(self):
-        # The Point randomly moves in the x-direction by adding one of the 'possibilities' (1, 0, or -1).
-        self.x += random.choice(possibilities)
-        # The Point also randomly moves in the y-direction.
-        self.y += random.choice(possibilities)
+    def move(self, max_x, max_y):
+        # tentative movement
+        x_new = self.x + random.choice(possibilities)
+        y_new = self.y + random.choice(possibilities)
+
+        # keep x inside the grid
+        if x_new < 0:
+            self.x = 0
+        elif x_new >= max_x:
+            self.x = max_x - 1
+        else:
+            self.x = x_new
+
+        # keep y inside the grid
+        if y_new < 0:
+            self.y = 0
+        elif y_new >= max_y:
+            self.y = max_y - 1
+        else:
+            self.y = y_new
+        # --------------------------------
 
     # This method simply prints the Point's current coordinates to the console.
     def display(self):
@@ -71,19 +87,20 @@ class Grid:
                 for p in self.points:
                     # Check if the current cell coordinates (i, j) match a Point's coordinates (p.x, p.y).
                     if (i == p.x) and (j == p.y):
-                        # If a match is found, place a '*' marker on the grid.
-                        marker = "*"
-                        # NOTE: This simple version assumes only one Point can be in a cell.
-                        # If multiple Points are on the same spot, it just shows one '*'.
 
-                # Print the determined 'marker' (either " " or "*").
+                        # --- Modification 2 (MY WORK) ---
+                        # Changed '*' to 'P' to show a custom marker.
+                        marker = "P"
+                        # --------------------------------
+
+                # Print the determined 'marker' (either " " or "P").
                 # 'end=""' prevents the 'print' function from starting a new line,
                 # so the markers appear side-by-side to form a row.
                 print(marker, end="")
 
-            # After the inner loop finishes (a full row 'j' is printed),
-            # this 'print()' with no arguments starts a new line for the next row 'i'.
+            # After the inner loop finishes,
             print()
+
 
 # --- Program Execution ---
 
@@ -100,19 +117,17 @@ G1.add_point(p2)
 
 # --- Simulation Loop ---
 
-# This 'while True' loop runs the simulation forever (until the user manually stops it, e.g., with Ctrl+C).
+# This 'while True' loop runs the simulation forever.
 while True:
     # 1. Display the current state of the grid.
     G1.display_grid()
 
     # 2. Move the points to a new, random location.
-    p1.move()
-    p2.move()
+    p1.move(G1.width, G1.height)
+    p2.move(G1.width, G1.height)
 
-    # 3. Pause the program for 0.5 seconds so the user can see the movement.
+    # 3. Pause the program for 0.5 seconds.
     time.sleep(0.5)
 
-    # 4. Clear the terminal screen using the 'os' module.
-    # On Linux/macOS, you might use 'os.system("clear")' instead of "cls".
-    # This makes the new grid display appear in the same spot, creating an animation effect.
+    # 4. Clear the terminal screen.
     os.system("cls")
